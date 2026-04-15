@@ -202,6 +202,21 @@
             border: 1px solid rgba(255, 255, 255, 0.3);
             text-shadow: 0 0 10px rgba(255,255,255,0.3);
         }
+        .image-block {
+            text-align: center;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.3) 0%, rgba(240, 147, 251, 0.3) 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .image-block img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
         input[type="text"] {
             width: 100%;
             padding: 0.8rem;
@@ -387,6 +402,10 @@
                 Результат: <span id="area">0</span>
             </div>
 
+            <div class="image-block" id="imageBlock">
+                <img src="" alt="Дом" id="resultImage">
+            </div>
+
             <div class="input-group">
                 <label for="userName">Ваше имя</label>
                 <input type="text" id="userName" placeholder="Введите имя">
@@ -409,8 +428,17 @@
     const userNameInput = document.getElementById('userName');
     const submitBtn = document.getElementById('submitBtn');
     const typeOptions = document.querySelectorAll('.type-option');
+    const resultImage = document.getElementById('resultImage');
 
     let selectedMultiplier = 0;
+
+    // Изображения для разных диапазонов результатов
+    const images = {
+        shed: 'https://cdn-icons-png.flaticon.com/512/685/685388.png',
+        cheap: 'https://cdn-icons-png.flaticon.com/512/609/609803.png',
+        expensive: 'https://cdn-icons-png.flaticon.com/512/2590/2590525.png',
+        bunker: 'https://cdn-icons-png.flaticon.com/512/1018/1018573.png'
+    };
 
     // Функция для обновления положения крутилки
     function updateKnobRotation(value) {
@@ -421,6 +449,19 @@
         const percentage = (value - min) / (max - min);
         const rotation = minRotation + (percentage * (maxRotation - minRotation));
         fancinessKnob.style.transform = `rotate(${rotation}deg)`;
+    }
+
+    // Функция для выбора изображения в зависимости от результата
+    function updateImage(result) {
+        if (result <= 50000) {
+            resultImage.src = images.shed;
+        } else if (result <= 100000) {
+            resultImage.src = images.cheap;
+        } else if (result <= 300000) {
+            resultImage.src = images.expensive;
+        } else {
+            resultImage.src = images.bunker;
+        }
     }
 
     typeOptions.forEach(option => {
@@ -443,6 +484,7 @@
         fancinessValue.textContent = fanciness.toFixed(2);
         updateKnobRotation(fanciness);
         areaDisplay.textContent = result.toLocaleString('ru-RU');
+        updateImage(result);
     }
 
     lengthInput.addEventListener('input', updateArea);
